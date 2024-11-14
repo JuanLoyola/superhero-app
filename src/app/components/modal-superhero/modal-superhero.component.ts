@@ -19,6 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SuperheroService } from '../../services/superhero.service';
+import { map, Observable } from 'rxjs';
 
 @Component({
     selector: 'modal-superhero',
@@ -42,7 +44,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class ModalSuperhero {
     constructor(
         private fb: FormBuilder,
-        private loadingService: LoadingService
+        private loadingService: LoadingService,
+        private superheroService: SuperheroService
     ) { }
 
     @Input() hero!: Superhero | null;
@@ -52,6 +55,7 @@ export class ModalSuperhero {
 
     @Output() heroAdded = new EventEmitter<Superhero>();
     @Output() heroEdited = new EventEmitter<Superhero>();
+    @Output() close = new EventEmitter<void>();
 
     private _formBuilder = inject(FormBuilder);
 
@@ -78,12 +82,27 @@ export class ModalSuperhero {
         }
     }
 
+    private generateUniqueId(): number {
+        let newId: number;
+        let superheroes: Superhero[] = [];
+
+        this.superheroService.getAllSuperheroes().subscribe(heroes => {
+            superheroes = heroes;
+        });
+
+        do {
+            newId = Math.floor(Math.random() * 50);
+        } while (superheroes.some((hero: Superhero) => hero.id === newId));
+
+        return newId;
+    }
+
     onSubmit() {
         if (this.firstFormGroup.valid && this.secondFormGroup.valid) {
             this.loadingService.show();
             this.showLoading = true;
 
-            const id = this.type === 'add' ? Math.floor(Math.random() * 50) : this.hero?.id;
+            const id = this.type === 'add' ? this.generateUniqueId() : this.hero?.id;
 
             const superheroData: Superhero = {
                 id: id!,
@@ -104,6 +123,6 @@ export class ModalSuperhero {
     }
 
     onClose() {
-        console.log('close')
+        this.close.emit();
     }
 }

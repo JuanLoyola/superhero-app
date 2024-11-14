@@ -66,7 +66,7 @@
 
 @if(openModal) {
 <modal-superhero [hero]="selectedHero" [type]="openModalEdit ? 'edit' : 'add'" (heroAdded)="onHeroAdded($event)"
-	(heroEdited)="onHeroEdited($event)">
+	(heroEdited)="onHeroEdited($event)" (close)="openModal = false">
 </modal-superhero>
 }
 
