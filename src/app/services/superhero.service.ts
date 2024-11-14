@@ -42,6 +42,7 @@ export class SuperheroService {
 				this.superheroes.update(current => {
 					const updated = [...current];
 					updated[index] = superhero;
+					console.log(updated)
 					return updated;
 				});
 			}

@@ -65,17 +65,13 @@ export class SuperheroListComponent implements OnInit {
 		this.filteredSuperheroes = this.superheroes;
 	}
 
-	handleAdd(superhero?: Superhero): void {
-		if (superhero) this.superheroService.addSuperhero(superhero);
-
-		this.updateFilteredSuperheroes();
+	handleAdd(): void {
 		this.handleModal('add')
 	}
 
 	handleEdit(superhero: Superhero): void {
 		this.selectedHero = superhero
 
-		this.updateFilteredSuperheroes();
 		this.handleModal('edit')
 	}
 
@@ -147,14 +143,24 @@ export class SuperheroListComponent implements OnInit {
 
 	onHeroEdited(editedHero: Superhero): void {
 		this.superheroService.editSuperhero(editedHero);
-		this.handleModal('edit')
+		this.handleModal('edit');
+
+
+		setTimeout(() => {
+			this.superheroes = this.superheroService.getAllSuperheroes()();
+			this.filteredSuperheroes = [...this.superheroes];
+		}, 800); // waiting the "request"
 	}
 
 	handleDelete(superhero: Superhero | null): void {
 		if (superhero != null) this.superheroService.deleteSuperhero(superhero.id);
 
+		setTimeout(() => {
+			this.superheroes = this.superheroService.getAllSuperheroes()();
+			this.filteredSuperheroes = [...this.superheroes];
+		}, 200); // waiting the "request"
+
 		this.showConfirm = !this.showConfirm
-		this.updateFilteredSuperheroes();
 	}
 
 	handleModal(type: 'add' | 'edit'): void {
