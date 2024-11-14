@@ -1,78 +1,104 @@
-<mat-card>
-	<mat-card-header>
-		<mat-card-title>Superhero List</mat-card-title>
-	</mat-card-header>
+<div class="flex flex-col md:flex-row justify-center items-center lg:h-screen">
+	<mat-card class="w-full md:w-3/4">
+		<mat-card-header>
+			<mat-card-title>Superhero List</mat-card-title>
+		</mat-card-header>
 
-	<mat-card-content>
-		<div class="mb-4">
-			<mat-form-field>
-				<mat-label>Search by name</mat-label>
-				<input matInput [(ngModel)]="searchTerm" (input)="filterSuperheroes()">
-			</mat-form-field>
-		</div>
+		<mat-card-content>
+			<div class="flex flex-col md:flex-row justify-between items-center gap-4 my-4">
+				<mat-form-field class="w-full md:w-1/3">
+					<mat-label>Search in table</mat-label>
+					<input matInput [(ngModel)]="searchTerm" (input)="searchInTable()">
+				</mat-form-field>
 
-		<div class="overflow-x-auto">
-			<table mat-table [dataSource]="paginatedSuperheroes" class="w-full">
-				<ng-container matColumnDef="id">
-					<th mat-header-cell *matHeaderCellDef>id</th>
-					<td mat-cell *matCellDef="let hero">
-						<span class="bg-indigo-100 px-4 py-1 rounded-full">
-							{{ hero.id }}
-						</span>
-					</td>
-				</ng-container>
+				<div class="flex flex-col md:flex-row justify-center items-center gap-4 w-full md:w-2/3">
+					<mat-form-field class="w-full md:w-1/2">
+						<mat-label>Search by name</mat-label>
+						<input matInput placeholder="Search by name" (input)="onSearchNameChange($event)">
+					</mat-form-field>
 
-				<ng-container matColumnDef="name">
-					<th mat-header-cell *matHeaderCellDef>Name</th>
-					<td mat-cell *matCellDef="let hero">{{ hero.name }}</td>
-				</ng-container>
+					<mat-form-field class="w-full md:w-1/2">
+						<mat-label>Search by ID</mat-label>
+						<input matInput #idInput [(ngModel)]="searchID" (input)="onSearchIdChange(idInput.value)">
+					</mat-form-field>
+				</div>
+			</div>
 
-				<ng-container matColumnDef="description">
-					<th mat-header-cell *matHeaderCellDef>Description</th>
-					<td mat-cell *matCellDef="let hero">{{ hero.description }}</td>
-				</ng-container>
+			<div class="overflow-x-auto xl:h-[20rem] overflow-y-hidden">
+				<table mat-table [dataSource]="paginatedSuperheroes" class="w-full">
+					<ng-container matColumnDef="id">
+						<th mat-header-cell *matHeaderCellDef>id</th>
+						<td mat-cell *matCellDef="let hero">
+							<span class="bg-indigo-100 px-4 py-1 rounded-full">
+								{{ hero.id }}
+							</span>
+						</td>
+					</ng-container>
 
-				<ng-container matColumnDef="actions">
-					<th mat-header-cell *matHeaderCellDef>Actions</th>
-					<td mat-cell *matCellDef="let hero">
-						<div class="flex gap-6">
-							<button mat-icon-button color="primary" (click)="handleEdit(hero)" aria-label="Edit">
-								<mat-icon>edit</mat-icon>
-							</button>
+					<ng-container matColumnDef="name">
+						<th mat-header-cell *matHeaderCellDef>Name</th>
+						<td mat-cell *matCellDef="let hero">{{ hero.name }}</td>
+					</ng-container>
 
-							<button mat-icon-button color="warn" (click)="showDeleteConfirm(hero)" aria-label="Delete">
-								<mat-icon>delete</mat-icon>
-							</button>
-						</div>
-					</td>
-				</ng-container>
+					<ng-container matColumnDef="description">
+						<th mat-header-cell *matHeaderCellDef>Description</th>
+						<td mat-cell *matCellDef="let hero">{{ hero.description }}</td>
+					</ng-container>
 
-				<tr mat-header-row *matHeaderRowDef="['id', 'name', 'description', 'actions']"></tr>
-				<tr mat-row *matRowDef="let row; columns: ['id', 'name', 'description', 'actions'];"></tr>
-			</table>
-		</div>
+					<ng-container matColumnDef="actions">
+						<th mat-header-cell *matHeaderCellDef>Actions</th>
+						<td mat-cell *matCellDef="let hero">
+							<div class="flex gap-6">
+								<button mat-icon-button color="primary" (click)="handleEdit(hero)" aria-label="Edit">
+									<mat-icon>edit</mat-icon>
+								</button>
 
-		<div class="mt-4 text-center">
-			<mat-paginator [length]="filteredSuperheroes.length" [pageSize]="itemsPerPage"
-				[pageSizeOptions]="[5, 10, 25, 100]" (page)="handlePageChange($event)">
-			</mat-paginator>
-		</div>
+								<button mat-icon-button color="warn" (click)="showDeleteConfirm(hero)"
+									aria-label="Delete">
+									<mat-icon>delete</mat-icon>
+								</button>
 
-		<div class="mt-4 text-right">
-			<button mat-raised-button color="accent" (click)="handleAdd()">Add Superhero</button>
-		</div>
-	</mat-card-content>
-</mat-card>
+								<button mat-icon-button color="accent" [routerLink]="['/superhero', hero.id]"
+									aria-label="View Details">
+									<mat-icon>visibility</mat-icon>
+								</button>
+							</div>
+						</td>
+					</ng-container>
 
-@if(openModal) {
-<modal-superhero [hero]="selectedHero" [type]="openModalEdit ? 'edit' : 'add'" (heroAdded)="onHeroAdded($event)"
-	(heroEdited)="onHeroEdited($event)" (close)="openModal = false">
-</modal-superhero>
-}
+					<tr mat-header-row *matHeaderRowDef="['id', 'name', 'description', 'actions']"></tr>
+					<tr mat-row *matRowDef="let row; columns: ['id', 'name', 'description', 'actions'];"></tr>
+				</table>
+				@if(filteredSuperheroes.length === 0) {
+				<ui-404 />
+				}
+			</div>
 
-@if(showConfirm) {
-<ui-confirm [title]="'Delete Superhero: ' + selectedHero?.name"
-	[text]="'Are you sure you want to delete this superhero? This action cannot be undone.'"
-	(close)="showConfirm = false" (confirm)="handleDelete(selectedHero)">
-</ui-confirm>
-}
+			<div class="mt-4 text-center">
+				<mat-paginator [length]="filteredSuperheroes.length" [pageSize]="itemsPerPage"
+					[pageSizeOptions]="[5, 10, 25, 100]" (page)="handlePageChange($event)">
+				</mat-paginator>
+			</div>
+
+			<div class="mt-4 flex justify-end items-center gap-4">
+				<button mat-button routerLink="/" (click)="resetInputs()">
+					<mat-icon>refresh</mat-icon> Reset
+				</button>
+				<button mat-raised-button color="accent" (click)="handleAdd()">Add Superhero</button>
+			</div>
+		</mat-card-content>
+	</mat-card>
+
+	@if(openModal) {
+	<modal-superhero [hero]="selectedHero" [type]="openModalEdit ? 'edit' : 'add'" (heroAdded)="onHeroAdded($event)"
+		(heroEdited)="onHeroEdited($event)" (close)="openModal = false">
+	</modal-superhero>
+	}
+
+	@if(showConfirm) {
+	<ui-confirm [title]="'Delete Superhero: ' + selectedHero?.name"
+		[text]="'Are you sure you want to delete this superhero? This action cannot be undone.'"
+		(close)="showConfirm = false" (confirm)="handleDelete(selectedHero)">
+	</ui-confirm>
+	}
+</div>

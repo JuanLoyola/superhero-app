@@ -1,0 +1,13 @@
+<div class="bg-white rounded-lg p-6 w-full max-w-2xl mx-auto mt-10">
+    <h2 class="text-2xl  text-center font-bold mb-4">{{ superhero?.name || 'Oops! Superhero Not Found!' }}</h2>
+    @if(!superhero) {
+    <ui-404 />
+    }
+
+    @if(superhero) {
+    <p><strong>Description:</strong> {{ superhero.description }}</p>
+    }
+    <div class="mt-4 flex justify-center">
+        <button mat-raised-button color="accent" routerLink="/">Back Home</button>
+    </div>
+</div>
