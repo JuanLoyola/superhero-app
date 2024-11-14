@@ -7,7 +7,6 @@ import {
     Validators,
 } from '@angular/forms';
 import { Superhero } from '../../models/superheroes.models';
-import { LoadingService } from '../../services/loading.service';
 import { MatIcon } from '@angular/material/icon';
 import {
     MatError,
@@ -20,7 +19,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SuperheroService } from '../../services/superhero.service';
-import { map, Observable } from 'rxjs';
 
 @Component({
     selector: 'modal-superhero',
@@ -43,8 +41,6 @@ import { map, Observable } from 'rxjs';
 })
 export class ModalSuperhero {
     constructor(
-        private fb: FormBuilder,
-        private loadingService: LoadingService,
         private superheroService: SuperheroService
     ) { }
 
@@ -86,9 +82,7 @@ export class ModalSuperhero {
         let newId: number;
         let superheroes: Superhero[] = [];
 
-        this.superheroService.getAllSuperheroes().subscribe(heroes => {
-            superheroes = heroes;
-        });
+        superheroes = this.superheroService.getAllSuperheroes()();
 
         do {
             newId = Math.floor(Math.random() * 50);
@@ -99,7 +93,6 @@ export class ModalSuperhero {
 
     onSubmit() {
         if (this.firstFormGroup.valid && this.secondFormGroup.valid) {
-            this.loadingService.show();
             this.showLoading = true;
 
             const id = this.type === 'add' ? this.generateUniqueId() : this.hero?.id;
@@ -113,7 +106,6 @@ export class ModalSuperhero {
             console.log(superheroData)
 
             setTimeout(() => {
-                this.loadingService.hide();
                 this.showLoading = false;
                 this.type === 'add'
                     ? this.heroAdded.emit(superheroData)

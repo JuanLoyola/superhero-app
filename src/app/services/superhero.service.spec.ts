@@ -1,73 +1,68 @@
 import { TestBed } from '@angular/core/testing';
 import { SuperheroService } from './superhero.service';
-import { LoadingService } from './loading.service';
 import { Superhero } from '../models/superheroes.models';
 
 describe('SuperheroService', () => {
     let service: SuperheroService;
-    let loadingService: jasmine.SpyObj<LoadingService>;
 
     beforeEach(() => {
-        const loadingServiceSpy = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
-
-        TestBed.configureTestingModule({
-            providers: [
-                SuperheroService,
-                { provide: LoadingService, useValue: loadingServiceSpy }
-            ]
-        });
-
+        TestBed.configureTestingModule({});
         service = TestBed.inject(SuperheroService);
-        loadingService = TestBed.inject(LoadingService) as jasmine.SpyObj<LoadingService>;
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should return all superheroes', (done) => {
-        service.getAllSuperheroes().subscribe(superheroes => {
-            expect(superheroes.length).toBe(8); // mockup to check add
-            done();
-        });
+    it('should return all superheroes', () => {
+        const superheroes = service.getAllSuperheroes();
+        expect(superheroes.length).toBe(8);
     });
 
-    it('should return a superhero by ID', (done) => {
-        service.getSuperheroById(1).subscribe(hero => {
-            expect(hero).toBeDefined();
-            expect(hero?.id).toBe(1);
-            done();
-        });
+    it('should return a superhero by ID', () => {
+        const superhero = service.getSuperheroById(1);
+        expect(superhero).toBeDefined();
+        expect(superhero?.name).toBe('Solar Flare');
     });
 
-    it('should add a superhero', (done) => {
+    it('should return undefined for a non-existing superhero ID', () => {
+        const superhero = service.getSuperheroById(999);
+        expect(superhero).toBeUndefined();
+    });
+
+    it('should return superheroes filtered by name', () => {
+        const filteredHeroes = service.getSuperheroesByName('Solar');
+        expect(filteredHeroes.length).toBe(1);
+        expect(filteredHeroes[0].name).toBe('Solar Flare');
+    });
+
+    it('should add a new superhero', (done) => {
         const newHero: Superhero = { id: 9, name: 'New Hero', description: 'A new superhero' };
         service.addSuperhero(newHero);
-
-        service.getAllSuperheroes().subscribe(superheroes => {
-            expect(superheroes.length).toBe(9); // default list have 8 items
-            expect(superheroes).toContain(newHero);
+        setTimeout(() => {
+            const superheroes = service.getAllSuperheroes();
+            expect(superheroes.length).toBe(9);
+            expect(superheroes[8].name).toBe('New Hero');
             done();
-        });
+        }, 1000);
     });
 
-    it('should edit a superhero', (done) => {
-        const editedHero: Superhero = { id: 1, name: 'Edited Hero', description: 'An edited superhero' };
+    it('should edit an existing superhero', (done) => {
+        const editedHero: Superhero = { id: 1, name: 'Updated Hero', description: 'An updated superhero' };
         service.editSuperhero(editedHero);
-
-        service.getSuperheroById(1).subscribe(hero => {
-            expect(hero).toBeDefined();
-            expect(hero?.name).toBe('Edited Hero');
+        setTimeout(() => {
+            const superhero = service.getSuperheroById(1);
+            expect(superhero?.name).toBe('Updated Hero');
             done();
-        });
+        }, 1000);
     });
 
     it('should delete a superhero', (done) => {
         service.deleteSuperhero(1);
-
-        service.getSuperheroById(1).subscribe(hero => {
-            expect(hero).toBeUndefined();
+        setTimeout(() => {
+            const superhero = service.getSuperheroById(1);
+            expect(superhero).toBeUndefined();
             done();
-        });
+        }, 1000);
     });
-}); 
+});

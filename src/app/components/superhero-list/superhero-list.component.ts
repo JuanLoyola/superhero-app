@@ -1,19 +1,19 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SuperheroService } from '../../services/superhero.service';
-import { LoadingService } from '../../services/loading.service';
 import { Superhero } from '../../models/superheroes.models';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { FormBuilder, FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { ConfirmComponent } from '../confirm/confirm.component';
+import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { NoResults } from '../404/404.component';
+import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { ModalSuperhero } from '../modal-superhero/modal-superhero.component';
-import { ActivatedRoute, RouterLink, Router } from '@angular/router';
-import { NoResults } from "../404/404.component";
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { ConfirmComponent } from '../confirm/confirm.component';
 
 @Component({
 	selector: 'app-superhero-list',
@@ -33,6 +33,7 @@ import { NoResults } from "../404/404.component";
 		ModalSuperhero,
 		RouterLink,
 		NoResults
+
 	],
 })
 export class SuperheroListComponent implements OnInit {
@@ -51,11 +52,7 @@ export class SuperheroListComponent implements OnInit {
 	selectedHero!: Superhero | null;
 
 	loading: boolean = false;
-
-	private superheroService = inject(SuperheroService);
-	private loadingService = inject(LoadingService);
-	private route = inject(ActivatedRoute);
-	private router = inject(Router);
+	constructor(private superheroService: SuperheroService, private router: Router) { }
 
 	get paginatedSuperheroes(): Superhero[] {
 		const startIndex = this.currentPage * this.itemsPerPage;
@@ -64,30 +61,22 @@ export class SuperheroListComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.route.params.subscribe(params => {
-			if (params['name']) {
-				this.superheroService.getSuperheroesByName(params['name']).subscribe(heroes => {
-					this.filteredSuperheroes = heroes;
-				});
-			} else if (params['id']) {
-				this.superheroService.getSuperheroById(+params['id']).subscribe(hero => {
-					this.filteredSuperheroes = hero ? [hero] : [];
-				});
-			} else {
-				this.getAllSuperheroes();
-			}
-		});
-
-		this.loadingService.loading$.subscribe(isLoading => {
-			this.loading = isLoading;
-		});
+		this.superheroes = this.superheroService.getAllSuperheroes()();
+		this.filteredSuperheroes = this.superheroes;
 	}
 
-	getAllSuperheroes(): void {
-		this.superheroService.getAllSuperheroes().subscribe(heroes => {
-			this.superheroes = heroes;
-			this.filteredSuperheroes = heroes;
-		});
+	handleAdd(superhero?: Superhero): void {
+		if (superhero) this.superheroService.addSuperhero(superhero);
+
+		this.updateFilteredSuperheroes();
+		this.handleModal('add')
+	}
+
+	handleEdit(superhero: Superhero): void {
+		this.selectedHero = superhero
+
+		this.updateFilteredSuperheroes();
+		this.handleModal('edit')
 	}
 
 	handlePageChange(event: PageEvent): void {
@@ -97,9 +86,11 @@ export class SuperheroListComponent implements OnInit {
 
 	onSearchNameChange(event: Event): void {
 		const value = (event.target as HTMLInputElement).value;
+
 		clearTimeout(this.searchTimeout);
 		this.searchTimeout = setTimeout(() => {
 			this.filterSuperheroes(value);
+			console.log(value)
 		}, 500);
 	}
 
@@ -123,6 +114,10 @@ export class SuperheroListComponent implements OnInit {
 		if (this.filteredSuperheroes.length === 0) this.searchTerm == '';
 	}
 
+	private updateFilteredSuperheroes(): void {
+		this.superheroes = this.superheroService.getAllSuperheroes()(); // Call the signal to get the current value
+		this.filterSuperheroes();
+	}
 	searchInTable(): void {
 		const searchTermLower = this.searchTerm.toLowerCase();
 
@@ -137,24 +132,9 @@ export class SuperheroListComponent implements OnInit {
 		this.router.navigate(['/superhero', id]);
 	}
 
-	handleAdd() {
-		this.selectedHero = null;
-		this.handleModal('add')
-	}
-
-	handleEdit(hero: Superhero): void {
-		this.selectedHero = hero;
-		this.handleModal('edit')
-	}
 
 	showDeleteConfirm(hero?: Superhero) {
 		if (hero) this.selectedHero = hero
-
-		this.showConfirm = !this.showConfirm
-	}
-
-	handleDelete(superhero: Superhero | null): void {
-		if (superhero != null) this.superheroService.deleteSuperhero(superhero.id);
 
 		this.showConfirm = !this.showConfirm
 	}
@@ -170,6 +150,13 @@ export class SuperheroListComponent implements OnInit {
 		this.handleModal('edit')
 	}
 
+	handleDelete(superhero: Superhero | null): void {
+		if (superhero != null) this.superheroService.deleteSuperhero(superhero.id);
+
+		this.showConfirm = !this.showConfirm
+		this.updateFilteredSuperheroes();
+	}
+
 	handleModal(type: 'add' | 'edit'): void {
 		if (type === 'edit') this.openModalEdit = !this.openModalEdit;
 
@@ -180,6 +167,6 @@ export class SuperheroListComponent implements OnInit {
 		this.searchID = ''
 		this.searchTerm = ''
 
-		this.getAllSuperheroes()
+		this.superheroes = this.superheroService.getAllSuperheroes()();
 	}
 }

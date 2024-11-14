@@ -19,16 +19,8 @@ export class SuperheroDetailComponent implements OnInit {
 
     ngOnInit(): void {
         const id = this.route.snapshot.paramMap.get('id');
-        const name = this.route.snapshot.paramMap.get('name');
-
         if (id) {
-            this.superheroService.getSuperheroById(+id).subscribe(hero => {
-                this.superhero = hero;
-            });
-        } else if (name) {
-            this.superheroService.getSuperheroesByName(name).subscribe(heroes => {
-                this.superhero = heroes[0]; // for demo purpose we show the first, this can scalate to a checkbox with multiples selected items
-            });
+            this.superhero = this.superheroService.getAllSuperheroes()().find(hero => hero.id === +id);
         }
     }
 } 
