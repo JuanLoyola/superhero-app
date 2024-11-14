@@ -67,3 +67,7 @@
 @if(openModalAdd) {
 <modal-add (heroAdded)="onHeroAdded($event)"></modal-add>
 }
+
+@if(openModalEdit) {
+<modal-edit [hero]="selectedHero" (heroEdited)="onHeroEdited($event)"></modal-edit>
+}
