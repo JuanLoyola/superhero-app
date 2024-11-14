@@ -1,0 +1,20 @@
+<div class="bg-black/50 h-screen w-full fixed top-0 left-0 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-6 w-full max-w-2xl relative">
+        <button mat-icon-button class="absolute top-2 right-2" (click)="onClose()">
+            <mat-icon>close</mat-icon>
+        </button>
+
+        <h2 class="text-xl font-bold mb-4">{{ title }}</h2>
+        <p>{{ text }}</p>
+
+        <div class="mt-4 flex gap-4 justify-end">
+            <button mat-button
+                class="bg-gray-300 hover:bg-gray-400 text-black font-semibold py-2 px-4 rounded transition duration-200"
+                (click)="onClose()">Cancel</button>
+
+            <button mat-raised-button color="warn"
+                class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition duration-200"
+                (click)="onConfirm()">Confirm</button>
+        </div>
+    </div>
+</div>

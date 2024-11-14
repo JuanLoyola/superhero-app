@@ -6,11 +6,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ModalAdd } from '../modal-add/modal-add.component';
 import { ModalEdit } from '../modal-add copy/modal-edit.component';
+import { ConfirmComponent } from '../confirm/confirm.component';
 
 @Component({
 	selector: 'app-superhero-list',
@@ -28,13 +29,14 @@ import { ModalEdit } from '../modal-add copy/modal-edit.component';
 		MatIconModule,
 		ModalAdd,
 		ModalEdit,
+		ConfirmComponent,
 	],
 })
 export class SuperheroListComponent implements OnInit {
 	superheroes: Superhero[] = [];
 	filteredSuperheroes: Superhero[] = [];
 	searchTerm: string = '';
-	currentPage: number = 1;
+	currentPage: number = 0;
 	itemsPerPage: number = 5;
 
 	openModalAdd = false;
@@ -44,6 +46,12 @@ export class SuperheroListComponent implements OnInit {
 	selectedHero!: Superhero;
 
 	private superheroService = inject(SuperheroService);
+
+	get paginatedSuperheroes(): Superhero[] {
+		const startIndex = this.currentPage * this.itemsPerPage;
+
+		return this.filteredSuperheroes.slice(startIndex, startIndex + this.itemsPerPage);
+	}
 
 	ngOnInit(): void {
 		this.getAll();
@@ -57,12 +65,9 @@ export class SuperheroListComponent implements OnInit {
 		});
 	}
 
-	handlePageChange(page: number): void {
-		this.currentPage = page;
-	}
-
-	handleDelete(superhero: Superhero): void {
-		this.superheroService.deleteSuperhero(superhero.id);
+	handlePageChange(event: PageEvent): void {
+		this.currentPage = event.pageIndex;
+		this.itemsPerPage = event.pageSize;
 	}
 
 	filterSuperheroes(): void {
@@ -83,6 +88,17 @@ export class SuperheroListComponent implements OnInit {
 		console.log(superhero);
 		this.openModalEdit = true;
 		this.selectedHero = superhero;
+	}
+
+	showDeleteConfirm(hero?: Superhero) {
+		if (hero) this.selectedHero = hero
+
+		this.showConfirm = !this.showConfirm
+	}
+
+	handleDelete(superhero: Superhero): void {
+		this.superheroService.deleteSuperhero(superhero.id);
+		this.showConfirm = !this.showConfirm
 	}
 
 	onHeroAdded(newHero: Superhero): void {
