@@ -66,11 +66,11 @@
                     <button mat-button matStepperPrevious>Back</button>
                     <div class="flex gap-2">
                         <button mat-button (click)="stepper.reset()">Reset</button>
-                        <button mat-raised-button color="primary" (click)="onSubmit()">
-                            Submit
+                        <button mat-raised-button color="primary" (click)="onSubmit()" class="flex items-center gap-2">
                             @if(showLoading) {
-                            <mat-spinner></mat-spinner>
-                            spiner
+                            <mat-spinner diameter="20"></mat-spinner>
+                            } @else {
+                            Submit
                             }
                         </button>
                     </div>
