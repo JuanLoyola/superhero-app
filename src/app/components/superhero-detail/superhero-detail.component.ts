@@ -27,7 +27,7 @@ export class SuperheroDetailComponent implements OnInit {
             });
         } else if (name) {
             this.superheroService.getSuperheroesByName(name).subscribe(heroes => {
-                this.superhero = heroes[0]; // for demo purpose we show the first
+                this.superhero = heroes[0]; // for demo purpose we show the first, this can scalate to a checkbox with multiples selected items
             });
         }
     }
