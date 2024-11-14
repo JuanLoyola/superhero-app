@@ -72,23 +72,30 @@ export class ModalSuperhero {
             this.secondFormGroup.patchValue({
                 description: this.hero.description,
             });
+        } else {
+            this.firstFormGroup.reset();
+            this.secondFormGroup.reset();
         }
     }
 
     onSubmit() {
         if (this.firstFormGroup.valid && this.secondFormGroup.valid) {
             this.loadingService.show();
-            this.showLoading = true
+            this.showLoading = true;
+
+            const id = this.type === 'add' ? Math.floor(Math.random() * 50) : this.hero?.id;
 
             const superheroData: Superhero = {
-                id: this.type === 'add' ? Math.floor(Math.random() * 50) : this.hero!.id,
+                id: id!,
                 name: this.firstFormGroup.get('name')!.value!,
-                description: this.secondFormGroup.get('description')!.value!  //  !  bc never will be null or undefined in this case (mockup)
+                description: this.secondFormGroup.get('description')!.value!
             };
+
+            console.log(superheroData)
 
             setTimeout(() => {
                 this.loadingService.hide();
-                this.showLoading = false
+                this.showLoading = false;
                 this.type === 'add'
                     ? this.heroAdded.emit(superheroData)
                     : this.heroEdited.emit(superheroData);

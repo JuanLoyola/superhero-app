@@ -88,7 +88,6 @@ export class SuperheroListComponent implements OnInit {
 	handleAdd() {
 		this.selectedHero = null;
 		this.openModal = true;
-		console.log('clickeado add')
 	}
 
 	handleEdit(hero: Superhero): void {
@@ -118,6 +117,7 @@ export class SuperheroListComponent implements OnInit {
 
 	onHeroEdited(editedHero: Superhero): void {
 		this.superheroService.editSuperhero(editedHero);
+		this.openModalEdit = false
 		this.openModal = false;
 	}
 }
