@@ -1,5 +1,6 @@
 import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { SuperheroService } from '../../services/superhero.service';
+import { LoadingService } from '../../services/loading.service';
 import { Superhero } from '../../models/superheroes.models';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ModalAdd } from '../modal-add/modal-add.component';
 import { ModalEdit } from '../modal-add copy/modal-edit.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
+import { ModalSuperhero } from '../modal-superhero/modal-superhero.component';
 
 @Component({
 	selector: 'app-superhero-list',
@@ -27,9 +29,10 @@ import { ConfirmComponent } from '../confirm/confirm.component';
 		MatPaginatorModule,
 		FormsModule,
 		MatIconModule,
-		ModalAdd,
-		ModalEdit,
+		// ModalAdd,
+		// ModalEdit,
 		ConfirmComponent,
+		ModalSuperhero
 	],
 })
 export class SuperheroListComponent implements OnInit {
@@ -39,13 +42,16 @@ export class SuperheroListComponent implements OnInit {
 	currentPage: number = 0;
 	itemsPerPage: number = 5;
 
-	openModalAdd = false;
+	openModal = false;
 	openModalEdit = false;
 	showConfirm = false;
 
-	selectedHero!: Superhero;
+	selectedHero!: Superhero | null;
+
+	loading: boolean = false;
 
 	private superheroService = inject(SuperheroService);
+	private loadingService = inject(LoadingService);
 
 	get paginatedSuperheroes(): Superhero[] {
 		const startIndex = this.currentPage * this.itemsPerPage;
@@ -55,6 +61,9 @@ export class SuperheroListComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.getAll();
+		this.loadingService.loading$.subscribe(isLoading => {
+			this.loading = isLoading;
+		});
 	}
 
 	getAll() {
@@ -81,13 +90,16 @@ export class SuperheroListComponent implements OnInit {
 	}
 
 	handleAdd() {
-		this.openModalAdd = !this.openModalAdd;
+		this.selectedHero = null;
+		this.openModal = true;
+		console.log('clickeado add')
 	}
 
-	handleEdit(superhero: Superhero): void {
-		console.log(superhero);
-		this.openModalEdit = true;
-		this.selectedHero = superhero;
+	handleEdit(hero: Superhero): void {
+		this.selectedHero = hero;
+
+		this.openModalEdit = true
+		this.openModal = true;
 	}
 
 	showDeleteConfirm(hero?: Superhero) {
@@ -96,27 +108,20 @@ export class SuperheroListComponent implements OnInit {
 		this.showConfirm = !this.showConfirm
 	}
 
-	handleDelete(superhero: Superhero): void {
-		this.superheroService.deleteSuperhero(superhero.id);
+	handleDelete(superhero: Superhero | null): void {
+		if (superhero != null) this.superheroService.deleteSuperhero(superhero.id);
 		this.showConfirm = !this.showConfirm
 	}
 
 	onHeroAdded(newHero: Superhero): void {
-		// TODO: esto deberia pushear a un array que tengamos en sessionStorage y luego traer esos items junto al nuevo
 		this.superheroes.push(newHero);
 		this.filteredSuperheroes = [...this.superheroes];
 
-		this.openModalAdd = false;
+		this.openModal = false;
 	}
 
 	onHeroEdited(editedHero: Superhero): void {
-		const index = this.superheroes.findIndex(
-			(hero) => hero.id === editedHero.id
-		);
-		if (index !== -1) {
-			this.superheroes[index] = editedHero;
-			this.filteredSuperheroes = [...this.superheroes];
-		}
-		this.openModalEdit = false;
+		this.superheroService.editSuperhero(editedHero);
+		this.openModal = false;
 	}
 }

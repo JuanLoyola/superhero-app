@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Superhero } from '../models/superheroes.models';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, delay } from 'rxjs/operators';
+import { LoadingService } from './loading.service';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class SuperheroService {
 
-	constructor() { }
+	constructor(private loadingService: LoadingService) { }
 
 	private superheroes: Superhero[] = [
 		{ id: 1, name: 'Solar Flare', description: 'A former astronaut who gained the power to manipulate solar energy after a space mission accident' },
@@ -41,21 +42,34 @@ export class SuperheroService {
 	}
 
 	addSuperhero(superhero: Superhero): void {
-		this.superheroes.push(superhero)
-		this.superheroes$.next(this.superheroes)
+		this.loadingService.show();
+		setTimeout(() => {
+			this.superheroes.push(superhero)
+			this.superheroes$.next(this.superheroes)
+
+			this.loadingService.hide();
+		}, 800);
+
 	}
 
 	editSuperhero(superhero: Superhero): void {
-		const index = this.superheroes.findIndex(hero => hero.id === superhero.id)
+		this.loadingService.show();
+		setTimeout(() => {
+			const index = this.superheroes.findIndex(hero => hero.id === superhero.id)
 
-		if (index !== -1) {
-			this.superheroes[index] = superhero
-			this.superheroes$.next(this.superheroes)
-		}
+			if (index !== -1) {
+				this.superheroes[index] = superhero
+				this.superheroes$.next(this.superheroes)
+			}
+
+			this.loadingService.hide();
+		}, 800);
 	}
 
 	deleteSuperhero(id: number): void {
 		this.superheroes = this.superheroes.filter(hero => hero.id !== id)
 		this.superheroes$.next(this.superheroes)
+
+		this.loadingService.hide();
 	}
 }
