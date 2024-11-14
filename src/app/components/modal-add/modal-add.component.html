@@ -6,7 +6,7 @@
 
         <h2 class="text-xl font-bold mb-4">Add New Superhero</h2>
 
-        <mat-stepper [linear]="isLinear" #stepper>
+        <mat-stepper [linear]="true" #stepper>
             <mat-step [stepControl]="firstFormGroup">
                 <form [formGroup]="firstFormGroup">
                     <ng-template matStepLabel>Basic Information</ng-template>

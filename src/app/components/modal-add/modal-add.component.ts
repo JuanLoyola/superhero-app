@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core'
+import { Component, EventEmitter, inject, Output } from '@angular/core'
 import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MatInputModule } from '@angular/material/input'
 import { MatFormFieldModule } from '@angular/material/form-field'
@@ -24,8 +24,12 @@ import { SuperheroService } from '../../services/superhero.service'
   ],
 })
 export class ModalAdd {
+  superheroes: Superhero[] = [];
+
   private _formBuilder = inject(FormBuilder)
   private superheroService = inject(SuperheroService)
+
+  @Output() heroAdded = new EventEmitter<Superhero>();
 
   firstFormGroup = this._formBuilder.group({
     name: ['', Validators.required],
@@ -43,10 +47,9 @@ export class ModalAdd {
         id: Math.floor(Math.random() * 50),
         name: this.firstFormGroup.get('name')?.value || 'N/A',
         description: this.secondFormGroup.get('description')?.value || 'N/A'
-      }
-      console.log(`estamos mandando: ${JSON.stringify(newHero)}`);
+      };
 
-      this.superheroService.addSuperhero(newHero);
+      this.heroAdded.emit(newHero);
     }
   }
 }

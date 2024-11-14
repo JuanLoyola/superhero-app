@@ -1,11 +1,7 @@
 <router-outlet>
   <div class="flex items-center justify-center h-screen">
     <div class="container">
-      <app-superhero-list (onAdd)="handleAdd()"></app-superhero-list>
-
-      @if(openModalAdd) {
-        <modal-add></modal-add>
-      }
+      <app-superhero-list></app-superhero-list>
     </div>
   </div>
 </router-outlet>

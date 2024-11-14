@@ -64,3 +64,6 @@
     </div>
   </mat-card-content>
 </mat-card>
+@if(openModalAdd) {
+<modal-add (heroAdded)="onHeroAdded($event)"></modal-add>
+}

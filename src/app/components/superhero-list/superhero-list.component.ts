@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core'
 import { SuperheroService } from '../../services/superhero.service'
 import { Superhero } from '../../models/superheroes.models'
 import { MatCardModule } from '@angular/material/card'
@@ -7,8 +7,9 @@ import { MatInputModule } from '@angular/material/input'
 import { MatTableModule } from '@angular/material/table'
 import { MatButtonModule } from '@angular/material/button'
 import { MatPaginatorModule } from '@angular/material/paginator'
-import { FormsModule } from '@angular/forms'
+import { FormBuilder, FormsModule } from '@angular/forms'
 import { MatIconModule } from '@angular/material/icon'
+import { ModalAdd } from '../modal-add/modal-add.component'
 
 
 @Component({
@@ -23,7 +24,8 @@ import { MatIconModule } from '@angular/material/icon'
     MatButtonModule,
     MatPaginatorModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
+    ModalAdd
   ]
 })
 export class SuperheroListComponent implements OnInit {
@@ -33,11 +35,22 @@ export class SuperheroListComponent implements OnInit {
   currentPage: number = 1
   itemsPerPage: number = 5
 
-  @Output() onAdd = new EventEmitter<void>()
+  // @Output() onAdd = new EventEmitter<void>()
+  openModalAdd = false
 
-  constructor(private superheroService: SuperheroService) { }
+  // private _formBuilder = inject(FormBuilder)
+  private superheroService = inject(SuperheroService)
 
   ngOnInit(): void {
+    // this.superheroService.getAllSuperheroes().subscribe(heroes => {
+    //   this.superheroes = heroes
+
+    //   this.filteredSuperheroes = heroes
+    // })
+    this.getAll()
+  }
+
+  getAll() {
     this.superheroService.getAllSuperheroes().subscribe(heroes => {
       this.superheroes = heroes
 
@@ -55,7 +68,6 @@ export class SuperheroListComponent implements OnInit {
   }
 
   handleDelete(superhero: Superhero): void {
-    console.log('Delete clicked')
     this.superheroService.deleteSuperhero(superhero.id)
   }
 
@@ -70,7 +82,13 @@ export class SuperheroListComponent implements OnInit {
   }
 
   handleAdd() {
-    this.onAdd.emit()
+    this.openModalAdd = !this.openModalAdd
   }
 
+  onHeroAdded(newHero: Superhero): void {
+    this.superheroes.push(newHero);
+    this.filteredSuperheroes = [...this.superheroes];
+
+    this.openModalAdd = false;
+  }
 }
