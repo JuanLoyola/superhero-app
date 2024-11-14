@@ -10,8 +10,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FormBuilder, FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { ModalAdd } from '../modal-add/modal-add.component';
-import { ModalEdit } from '../modal-add copy/modal-edit.component';
 import { ConfirmComponent } from '../confirm/confirm.component';
 import { ModalSuperhero } from '../modal-superhero/modal-superhero.component';
 
@@ -29,8 +27,6 @@ import { ModalSuperhero } from '../modal-superhero/modal-superhero.component';
 		MatPaginatorModule,
 		FormsModule,
 		MatIconModule,
-		// ModalAdd,
-		// ModalEdit,
 		ConfirmComponent,
 		ModalSuperhero
 	],
