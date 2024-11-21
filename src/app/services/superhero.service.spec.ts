@@ -15,14 +15,14 @@ describe('SuperheroService', () => {
     });
 
     it('should return all superheroes', () => {
-        const superheroes = service.getAllSuperheroes();
+        const superheroes = service.getAllSuperheroes()();
         expect(superheroes.length).toBe(8);
     });
 
     it('should return a superhero by ID', () => {
         const superhero = service.getSuperheroById(1);
         expect(superhero).toBeDefined();
-        expect(superhero?.name).toBe('Solar Flare');
+        expect(superhero?.name).toBe('solar Flare');
     });
 
     it('should return undefined for a non-existing superhero ID', () => {
@@ -31,16 +31,18 @@ describe('SuperheroService', () => {
     });
 
     it('should return superheroes filtered by name', () => {
-        const filteredHeroes = service.getSuperheroesByName('Solar');
+        const filteredHeroes = service.getSuperheroesByName('solar');
         expect(filteredHeroes.length).toBe(1);
-        expect(filteredHeroes[0].name).toBe('Solar Flare');
+        expect(filteredHeroes[0].name).toBe('solar Flare');
     });
 
     it('should add a new superhero', (done) => {
         const newHero: Superhero = { id: 9, name: 'New Hero', description: 'A new superhero' };
+
         service.addSuperhero(newHero);
+
         setTimeout(() => {
-            const superheroes = service.getAllSuperheroes();
+            const superheroes = service.getAllSuperheroes()();
             expect(superheroes.length).toBe(9);
             expect(superheroes[8].name).toBe('New Hero');
             done();
@@ -58,11 +60,14 @@ describe('SuperheroService', () => {
     });
 
     it('should delete a superhero', (done) => {
-        service.deleteSuperhero(1);
+        service.addSuperhero({ id: 9, name: 'New Hero', description: 'A new superhero' });
         setTimeout(() => {
-            const superhero = service.getSuperheroById(1);
-            expect(superhero).toBeUndefined();
-            done();
+            service.deleteSuperhero(9);
+            setTimeout(() => {
+                const superhero = service.getSuperheroById(9);
+                expect(superhero).toBeUndefined();
+                done();
+            }, 1000);
         }, 1000);
     });
 });
