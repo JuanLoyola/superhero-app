@@ -13,6 +13,8 @@ import { ModalSuperhero } from '../modal-superhero/modal-superhero.component';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { ConfirmComponent } from '../confirm/confirm.component';
+import { UpperCasePipe } from '@angular/common';
+import { CapitalizePipe } from '../../pipes/capitalize.pipe';
 
 @Component({
 	selector: 'app-superhero-list',
@@ -31,8 +33,9 @@ import { ConfirmComponent } from '../confirm/confirm.component';
 		ConfirmComponent,
 		ModalSuperhero,
 		RouterLink,
-		NoResults
-
+		NoResults,
+		UpperCasePipe,
+		CapitalizePipe
 	],
 })
 export class SuperheroListComponent implements OnInit {

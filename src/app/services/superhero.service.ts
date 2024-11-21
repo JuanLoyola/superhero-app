@@ -7,14 +7,14 @@ import { Superhero } from '../models/superheroes.models';
 export class SuperheroService {
 
 	private superheroes = signal<Superhero[]>([
-		{ id: 1, name: 'Solar Flare', description: 'A former astronaut who gained the power to manipulate solar energy after a space mission accident' },
-		{ id: 2, name: 'Shadow Walker', description: 'A mysterious vigilante with the ability to melt into shadows and travel through darkness' },
-		{ id: 3, name: 'Terra Force', description: 'An environmentalist who can control plants and the earth' },
-		{ id: 4, name: 'Quantum Mind', description: 'A brilliant scientist with telepathic abilities and superhuman intelligence' },
-		{ id: 5, name: 'Crystal Guardian', description: 'A warrior with the power to create and manipulate crystal structures for both defense and offense' },
-		{ id: 6, name: 'Spiderman', description: 'A young man who gained spider-like abilities after being bitten by a radioactive spider, allowing him to climb walls and shoot webs' },
-		{ id: 7, name: 'Superman', description: 'The last son of Krypton, with super strength, flight ability, and other superhuman powers' },
-		{ id: 8, name: 'Pepsiman', description: 'The corporate mascot turned hero, with a mission to deliver Pepsi and refresh the world' },
+		{ id: 1, name: 'solar Flare', description: 'A former astronaut who gained the power to manipulate solar energy after a space mission accident' },
+		{ id: 2, name: 'shadow Walker', description: 'A mysterious vigilante with the ability to melt into shadows and travel through darkness' },
+		{ id: 3, name: 'terra Force', description: 'An environmentalist who can control plants and the earth' },
+		{ id: 4, name: 'quantum Mind', description: 'A brilliant scientist with telepathic abilities and superhuman intelligence' },
+		{ id: 5, name: 'crystal Guardian', description: 'A warrior with the power to create and manipulate crystal structures for both defense and offense' },
+		{ id: 6, name: 'spiderman', description: 'A young man who gained spider-like abilities after being bitten by a radioactive spider, allowing him to climb walls and shoot webs' },
+		{ id: 7, name: 'superman', description: 'The last son of Krypton, with super strength, flight ability, and other superhuman powers' },
+		{ id: 8, name: 'pepsiman', description: 'The corporate mascot turned hero, with a mission to deliver Pepsi and refresh the world' },
 	])
 
 	getAllSuperheroes() {
