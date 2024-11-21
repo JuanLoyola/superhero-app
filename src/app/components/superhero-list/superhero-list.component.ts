@@ -6,10 +6,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
-import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { NoResults } from '../404/404.component';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { ModalSuperhero } from '../modal-superhero/modal-superhero.component';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -110,10 +109,6 @@ export class SuperheroListComponent implements OnInit {
 		if (this.filteredSuperheroes.length === 0) this.searchTerm == '';
 	}
 
-	private updateFilteredSuperheroes(): void {
-		this.superheroes = this.superheroService.getAllSuperheroes()(); // Call the signal to get the current value
-		this.filterSuperheroes();
-	}
 	searchInTable(): void {
 		const searchTermLower = this.searchTerm.toLowerCase();
 
@@ -149,7 +144,7 @@ export class SuperheroListComponent implements OnInit {
 		setTimeout(() => {
 			this.superheroes = this.superheroService.getAllSuperheroes()();
 			this.filteredSuperheroes = [...this.superheroes];
-		}, 800); // waiting the "request"
+		}, 800);
 	}
 
 	handleDelete(superhero: Superhero | null): void {
@@ -158,7 +153,7 @@ export class SuperheroListComponent implements OnInit {
 		setTimeout(() => {
 			this.superheroes = this.superheroService.getAllSuperheroes()();
 			this.filteredSuperheroes = [...this.superheroes];
-		}, 200); // waiting the "request"
+		}, 200);
 
 		this.showConfirm = !this.showConfirm
 	}
